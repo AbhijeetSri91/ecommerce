@@ -26,16 +26,19 @@ export class CheckoutComponent implements OnInit {
   countries: Country[] = [];
   shippingAddressStates: State[] = [];
   billingAddressStates: State[] = [];
+  storage: Storage = sessionStorage;
   constructor(private formBuilder: FormBuilder, private formService: ShopFormService, private cartService: CartService, private checkoutService: CheckoutService,
     private router: Router) { }
 
   ngOnInit(): void {
+    this.reviewCartDetails();
+    const theEmail = JSON.parse(this.storage.getItem('userEmail'));
 
     this.checkoutFormGroup = this.formBuilder.group({
       customer: this.formBuilder.group({
         firstName: new FormControl('', [Validators.required, Validators.minLength(2), WhiteSpaceValidators.notOnlyWhiteSpace]),
         lastName: new FormControl('', [Validators.required, Validators.minLength(2), WhiteSpaceValidators.notOnlyWhiteSpace]),
-        email: new FormControl('', [Validators.required, Validators.pattern('^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$')]),
+        email: new FormControl(theEmail, [Validators.required, Validators.pattern('^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$')]),
       }),
       shippingAddress: this.formBuilder.group({
         street: new FormControl('', [Validators.required, Validators.minLength(2), WhiteSpaceValidators.notOnlyWhiteSpace]),
@@ -78,7 +81,7 @@ export class CheckoutComponent implements OnInit {
       }
     );
     this.populateCountries();
-    this.reviewCartDetails();
+
   }
 
   get firstName() { return this.checkoutFormGroup.get('customer.firstName') }
@@ -108,8 +111,6 @@ export class CheckoutComponent implements OnInit {
     this.cartService.totalPrice.subscribe(data => this.totalPrice = data);
     this.cartService.totalQuantity.subscribe(data => this.totalQuantity = data);
   }
-
-
 
 
   copyShippingToBillingAddr(event) {
@@ -180,6 +181,7 @@ export class CheckoutComponent implements OnInit {
     this.cartService.totalPrice.next(0);
     //reset formData
     this.checkoutFormGroup.reset();
+    this.cartService.persistCartItems();
 
     //navigate back to products page
     this.router.navigateByUrl('/products');

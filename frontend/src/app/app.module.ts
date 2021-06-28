@@ -19,6 +19,7 @@ import { LoginStatusComponent } from './components/login-status/login-status.com
 import { OktaAuthModule, OKTA_CONFIG, OktaCallbackComponent, OktaAuthGuard } from '@okta/okta-angular';
 import myAppConfig from './config/my-app-config';
 import { MemberPageComponent } from './components/member-page/member-page.component';
+import { OrderHistoryComponent } from './components/order-history/order-history.component';
 
 const oktaConfig = Object.assign({
   onAuthRequired: (oktaAuth, injector) => {
@@ -29,6 +30,7 @@ const oktaConfig = Object.assign({
 
 const routes: Routes = [
   { path: 'members', component: MemberPageComponent, canActivate: [OktaAuthGuard] },
+  { path: 'order-history', component: OrderHistoryComponent, canActivate: [OktaAuthGuard] },
   { path: 'login/callback', component: OktaCallbackComponent },
   { path: 'login', component: LoginComponent },
 
@@ -55,7 +57,8 @@ const routes: Routes = [
     CheckoutComponent,
     LoginComponent,
     LoginStatusComponent,
-    MemberPageComponent
+    MemberPageComponent,
+    OrderHistoryComponent
   ],
   imports: [
     BrowserModule,
